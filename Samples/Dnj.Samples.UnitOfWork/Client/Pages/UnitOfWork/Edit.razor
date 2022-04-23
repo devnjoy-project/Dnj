@@ -1,0 +1,23 @@
+﻿@page "/unitofwork/edit/{dtoId}"
+@using Dnj.Samples.UnitOfWork.Shared
+@inject HttpClient _http
+@inject NavigationManager _uriHelper
+@inject IJSRuntime _js
+<h3>Edit</h3>
+<Form ButtonText="Update" dto="@dto"
+      OnValidSubmit="@EditDto" />
+@code {
+    [Parameter] public string dtoId { get; set; }
+    UnitOfWorkDto dto = new UnitOfWorkDto();
+    
+    protected override async  Task OnParametersSetAsync()
+    {
+        dto = await _http.GetFromJsonAsync<UnitOfWorkDto>($"api/unitofwork/{dtoId}");
+    }
+    async Task EditDto()
+    {
+        await _http.PutAsJsonAsync("api/unitofwork", dto);
+        await _js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        _uriHelper.NavigateTo("unitofwork");
+    }
+}

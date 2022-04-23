@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>Dnj.Projects.GenericPortfolio.Server-33AB9347-A6DC-4FFF-9154-4B05238DABAE</UserSecretsId>
+
+  </PropertyGroup>
+	
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Shared\Net\Dnj.Shared.Net.Extensions.Identity\Dnj.Shared.Net.Extensions.Identity.csproj" />
+    <ProjectReference Include="..\Client\Dnj.Projects.GenericPortfolio.Client.csproj" />
+    <ProjectReference Include="..\Shared\Dnj.Projects.GenericPortfolio.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+﻿@page "/unitofwork/create"
+@using Dnj.Samples.UnitOfWork.Shared
+@inject HttpClient http
+@inject NavigationManager uriHelper
+<h3>Create</h3>
+<Form ButtonText="Create" dto="@_dto"
+      OnValidSubmit="@CreateDto" ></Form>
+@code {
+    private readonly UnitOfWorkDto _dto = new UnitOfWorkDto();
+    async Task CreateDto()
+    {
+        await http.PostAsJsonAsync("api/unitofwork", _dto);
+        uriHelper.NavigateTo("unitofwork");
+    }
+}

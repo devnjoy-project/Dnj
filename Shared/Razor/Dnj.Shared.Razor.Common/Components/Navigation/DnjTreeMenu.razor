@@ -1,0 +1,50 @@
+﻿@using Dnj.Shared.Razor.Common.Models
+@using System.ComponentModel.DataAnnotations
+@using System.Runtime.CompilerServices
+
+<div class="container-fluid">
+    <div class="row top-row">
+        <div class="d-flex justify-content-center">
+            <button title="Dropdown Title" class="" @onclick="ToggleDropdownMenu">
+                <span class="">Toggle</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            @*DROPDOWN MENU*@
+            <div class="@DropdownMenuCssClass" @onclick="ToggleDropdownMenu">
+                TEST
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public List<DnjTreeMenuOption> MenuOptions { get; set; }
+
+    private bool _collapseMenu = true;
+    private bool _valid = false;
+    
+    private string? DropdownMenuCssClass => _collapseMenu ? "collapse" : null;
+
+    private void ToggleDropdownMenu()
+    {
+        _collapseMenu = !_collapseMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+
+
+    }
+
+
+
+
+}

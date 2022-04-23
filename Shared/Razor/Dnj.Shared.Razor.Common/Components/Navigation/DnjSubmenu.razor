@@ -1,0 +1,77 @@
+﻿@using Dnj.Shared.Razor.Common.Models
+@using Microsoft.AspNetCore.Components.Routing
+@namespace Dnj.Shared.Razor.Common.Components.Navigation
+
+<div class="container">
+    <div class="row">
+        <div class="col @CssColumnSize">
+
+            @*DROPDOWN TOGGLE*@
+            <div class="top-row">
+                <div class="d-flex justify-content-center">
+                    <button title="Dropdown Title" class="@CssToggleButton" @onclick="ToggleDropdownMenu">
+                        <span class="">Toggle</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col @CssColumnSize">
+            @*DROPDOWN MENU*@
+            <div class="@DropdownMenuCssClass" @onclick="ToggleDropdownMenu">
+                <div class="flex-column">
+                    @foreach (var x in LabelLinks)
+                    {
+                        <div class="@x.CssClass">
+                            @if (string.IsNullOrEmpty(x.Href))
+                            {
+                                @if (!string.IsNullOrEmpty(x.CssIonicIcon))
+                                {
+                                    <span class="oi @x.CssIonicIcon" aria-hidden="true"></span>
+                                }
+                                <h6 class="justify-content-center text-center">@x.Label</h6>
+
+                            }
+                            else
+                            {
+                                <NavLink class="nav-link justify-content-center text-center" href="@x.Href">
+                                    @if (!string.IsNullOrEmpty(x.CssIonicIcon))
+                                    {
+                                        <span class="oi @x.CssIonicIcon" aria-hidden="true"></span>
+                                    }
+                                    @x.Label
+                                </NavLink>
+                            }
+                        </div>
+                        <DnjSubmenu />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@code {
+    [Parameter]
+    public List<DnjLabelLink> LabelLinks { get; set; } = new List<DnjLabelLink>();
+
+    [Parameter]
+    public string CssToggleButton { get; set; } = "btn btn-primary";
+
+    [Parameter]
+    public string CssColumnSize { get; set; } = "col-md-3";
+
+    private bool _collapseDropdownMenu = true;
+
+    private string? DropdownMenuCssClass => _collapseDropdownMenu ? "collapse" : null;
+
+    private void ToggleDropdownMenu()
+    {
+        _collapseDropdownMenu = !_collapseDropdownMenu;
+    }
+
+}

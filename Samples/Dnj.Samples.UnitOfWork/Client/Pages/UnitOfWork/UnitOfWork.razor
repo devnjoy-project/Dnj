@@ -1,0 +1,119 @@
+﻿@page "/UnitOfWork"
+@using Dnj.Samples.UnitOfWork.Shared
+@inject HttpClient client
+@inject IJSRuntime js
+
+<h3>Unit Of Work</h3>
+<small>Add</small>
+<div class="form-group">
+    <a class="btn btn-success" href="unitofwork/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+<br>
+@if (dtos == null)
+{
+    <text>Loading...</text>
+}
+else if (dtos.Count == 0)
+{
+    <text>No Records Found.</text>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+    @*<table class="table table-striped">*@
+        <thead>
+        <tr>
+            <th class="sort-th" @onclick="@(() => SortTable("Id"))">Id
+                <span aria-hidden="true" class="@(SetSortIcon("Id"))"></span>
+            </th>
+            <th class="sort-th" @onclick="@(() => SortTable("ParamString"))">Param string
+                <span aria-hidden="true" class="@(SetSortIcon("ParamString"))"></span>
+            </th>
+            <th class="sort-th" @onclick="@(() => SortTable("ParamInt"))">Param int
+                <span aria-hidden="true" class="@(SetSortIcon("ParamInt"))"></span>
+            </th>
+            <th class="sort-th" @onclick="@(() => SortTable("ParamDate"))">Param date
+                <span aria-hidden="true" class="@(SetSortIcon("ParamDate"))"></span>
+            </th>
+            <th class="sort-th" @onclick="@(() => SortTable("ParamDecimal"))">Param decimal
+                <span aria-hidden="true" class="@(SetSortIcon("ParamDecimal"))"></span>
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (UnitOfWorkDto dto in dtos)
+        {
+            <tr>
+                <td>@dto.Id</td>
+                <td>@dto.ParamString</td>
+                <td>@dto.ParamInt</td>
+                <td>@dto.ParamDate</td>
+                <td>@dto.ParamDecimal</td>
+                <td>
+                    <a class="btn btn-success" href="unitofwork/edit/@dto.Id">Edit</a>
+                    <button class="btn btn-danger" @onclick="@(() => Delete(dto.Id))">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+@code {
+    List<UnitOfWorkDto> dtos { get; set; }
+    
+    private bool isSortedAscending;
+    private string activeSortColumn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dtos = await client.GetFromJsonAsync<List<UnitOfWorkDto>>("api/unitofwork");
+    }
+    async Task Delete(Guid dtoId)
+    {
+        var dto = dtos.First(x => x.Id == dtoId);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {dto.ParamString}'s ({dto.Id}) Record?"))
+        {
+            await client.DeleteAsync($"api/unitofwork/{dtoId}");
+            await OnInitializedAsync();
+        }
+    }
+
+    private void SortTable(string columnName)
+    {
+        if (columnName != activeSortColumn)
+        {
+            dtos = dtos.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            isSortedAscending = true;
+            activeSortColumn = columnName;
+        }
+        else
+        {
+            if (isSortedAscending)
+            {
+                dtos = dtos.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            }
+            else
+            {
+                dtos = dtos.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            }
+            isSortedAscending = !isSortedAscending;
+        }
+    }
+    private string SetSortIcon(string columnName)
+    {
+        if (activeSortColumn != columnName)
+        {
+            return string.Empty;
+        }
+        if (isSortedAscending)
+        {
+            return "oi oi-caret-top";
+        }
+        else
+        {
+            return "oi oi-caret-bottom";
+        }
+    }
+
+}

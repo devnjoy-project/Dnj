@@ -1,0 +1,36 @@
+﻿@page "/validateannotations"
+@using System.Text
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+<h3>ValidateAnnotationsInComponent</h3>
+<p>
+    Validation Result: @Result
+</p>
+
+
+@code {
+
+    [Parameter, Required]
+    public string? IsRequiredParameter { get; set; }
+
+    private string? Result { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        JsonContent httpContent = JsonContent.Create(JsonSerializer.Serialize(this));
+        httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        var result = Http.PostAsync("ValidateAnnotationsInComponent", httpContent);
+        result.ContinueWith(o =>
+        {
+            if (o.IsCompletedSuccessfully)
+            {
+                Result = o.Result.IsSuccessStatusCode ? "OK" : "KO";
+                StateHasChanged();
+            }
+        });
+        base.OnParametersSet();
+    }
+
+}
